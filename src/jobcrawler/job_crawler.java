@@ -136,7 +136,6 @@ public class job_crawler {
                      
                     String[] title = s1[1].split(endS);
                     System.out.println("Job title: " + title[0]);
-                    
                     crawlSkills(title[0], url);
 //                    return title[0];
                 }
@@ -173,8 +172,7 @@ public class job_crawler {
         while(s != null){
             if(s.contains(validInfo)){
                 result = clean(s);
-                System.out.println("result: " + result);
-                fileWriting(result);
+                fileWriting(jobTitle, result);
             }
             if(s.contains(endS))
                 end = true;
@@ -183,51 +181,7 @@ public class job_crawler {
         }
         
     }
-    
-    public void crawlQualifications(String viewKey){
-        String pre = "http://www.jobstreet.com.ph/en/job/";
-        String post = "?fr=21&src=16&srcr=16";
-        String url = "";
-    
-        url = pre+viewKey+post;
-        System.out.println();
-        System.out.println("========== CRAWLING JOB " + viewKey + " ==========");
-        try {
-            URL new_url = new URL(url);
-            
-            HttpURLConnection httpcon = (HttpURLConnection) new_url.openConnection(); 
-            httpcon.addRequestProperty("User-Agent", "Mozilla/4.76"); 
- 
-            InputStream is= httpcon.getInputStream();
-            InputStreamReader reader = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(reader);
-            String s = br.readLine();
-            
-            String endS = "How to Apply";
-            int ctr = 0;
-            boolean end = false;
-            String label = "<div><strong>";
-            String validInfo = "<li>";
-            String extra = "<a href";
-
-            while(s!=null){
-                if(s.contains(endS)){
-                    end = true;
-                }
-                if((s.contains(validInfo) && !s.contains(extra)) || 
-                    (s.contains(label) && !s.contains(extra))){
-//                    s = getContentsOnly(s);
-                    System.out.println(s);
-                }
-                s = br.readLine();
-            }
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(JobCrawler.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(JobCrawler.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    }
-        
+       
     public static String getViewLink(String s){
         String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
         String post = "\"?fr=21&src=16&srcr=16";
@@ -261,7 +215,7 @@ public class job_crawler {
 //      }
     }
     
-    public void fileWriting(String content) throws IOException{
+    public void fileWriting(String jobTitle, String content) throws IOException{
         File outputFile = new File("Jobs_Page.txt");
 //        
 //        FileWriter fileWrite = null;
@@ -273,8 +227,12 @@ public class job_crawler {
             
             BufferedWriter outStream= new BufferedWriter(new FileWriter(outputFile, true));
             
+            String title = "Job Title: " + jobTitle;
+            outStream.write(title);
             outStream.newLine();
             outStream.write(content);
+            outStream.newLine();
+            outStream.newLine();
             outStream.close();
 //             if(!outputFile.exists()){outputFile.createNewFile();}
      
