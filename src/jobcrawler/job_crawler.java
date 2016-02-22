@@ -44,7 +44,7 @@ public class job_crawler {
         String post = "&src=16&srcr=16";
         String url = "";
         
-        for(int i = 1; i <= 1; i++ ){
+        for(int i = 1; i <= 2; i++ ){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
@@ -151,8 +151,46 @@ public class job_crawler {
         } 
 //        return null;
     }
+     
+    public static String getViewLink(String s){
+        String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
+        String post = "\"?fr=21&src=16&srcr=16";
+        
+        String[] s1 = s.split(pre);
+        String[] s2 = s1[1].split(post);
+        String s3 = s2[0];
+        String[] result = s3.split("[?]");
+        return result[0];
+    }
     
-    public void crawlSkills(String jobTitle, String url) throws IOException{
+    //TODO CLEANING....
+    public static String clean(String s){
+      String pre = "<div itemprop=\"description\" class=\"unselectable wrap-text\" id=\"job_description\">";
+      String[] s1 = s.split(pre);
+      boolean end = false;
+      System.out.println(s1[1]);
+      
+//      
+//        while(s1[1].contains("<") && end == false){
+//          if(s.contains("<div>")){
+//            String[] div = s1[1].split("<div>");
+//            s1[1] = div[1];
+//            System.out.println("s1[0]: "+s1[0]);
+//            System.out.println("s1[1]: " +s1[1]);
+//          }
+//          end = true;
+//        }
+      return s1[1];
+//        else if(s.contains("</div")){
+//          String[] div2 = s1[1].split("</div>");
+//          s1[1] = div2[0];
+//          System.out.println(s1[1]);
+//        }
+      
+//      }
+    }
+    
+     public void crawlSkills(String jobTitle, String url) throws IOException{
         URL u = new URL(url);
             
         HttpURLConnection httpcon = (HttpURLConnection) u.openConnection(); 
@@ -181,42 +219,10 @@ public class job_crawler {
         }
         
     }
-       
-    public static String getViewLink(String s){
-        String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
-        String post = "\"?fr=21&src=16&srcr=16";
-        
-        String[] s1 = s.split(pre);
-        String[] s2 = s1[1].split(post);
-        String s3 = s2[0];
-        String[] result = s3.split("[?]");
-        return result[0];
-    }
-    
-    //TODO CLEANING....
-    public static String clean(String s){
-      String pre = "<div itemprop=\"description\" class=\"unselectable wrap-text\" id=\"job_description\">";
-      String[] s1 = s.split(pre);
-      System.out.println(s1[1]);
-      return s1[1];
       
-//      while(s1[1].contains("<")){
-//        if(s.contains("<div>")){
-//          String[] div = s1[1].split("<div>");
-//          s1[1] = div[0];
-//          System.out.println(s1[1]);
-//        }
-//        else if(s.contains("</div")){
-//          String[] div2 = s1[1].split("</div>");
-//          s1[1] = div2[0];
-//          System.out.println(s1[1]);
-//        }
-      
-//      }
-    }
-    
     public void fileWriting(String jobTitle, String content) throws IOException{
-        File outputFile = new File("Jobs_Page.txt");
+        File outputFile = new File(jobTitle + ".txt");
+        boolean append = true;
 //        
 //        FileWriter fileWrite = null;
 //        BufferedWriter bufferedWriter = null;
@@ -225,7 +231,7 @@ public class job_crawler {
         try{
             if(!outputFile.exists()){outputFile.createNewFile();}
             
-            BufferedWriter outStream= new BufferedWriter(new FileWriter(outputFile, true));
+            BufferedWriter outStream= new BufferedWriter(new FileWriter(outputFile, append));
             
             String title = "Job Title: " + jobTitle;
             outStream.write(title);
@@ -234,6 +240,7 @@ public class job_crawler {
             outStream.newLine();
             outStream.newLine();
             outStream.close();
+            append = false;
 //             if(!outputFile.exists()){outputFile.createNewFile();}
      
 //            fileWrite = new FileWriter(outputFile);
