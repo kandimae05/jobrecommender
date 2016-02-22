@@ -5,10 +5,7 @@
  */
 package jobcrawler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +19,7 @@ import java.util.logging.Logger;
  */
 public class job_crawler {
     private static ArrayList<String> jobViewKeys = new ArrayList<String>();
+    
     Jobs job;
     
     public static void main(String[] args) throws MalformedURLException, IOException  {
@@ -97,7 +95,7 @@ public class job_crawler {
                 if(s.contains(validInfo)){
                     ctr++;
                     s = getViewLink(s);
-                    System.out.println("viewkey "+ctr+": "+s);
+//                    System.out.println("viewkey "+ctr+": "+s);
                     jobViewKeys.add(s);
                 }
                 s = br.readLine();
@@ -170,16 +168,20 @@ public class job_crawler {
         boolean end = false;
         String validInfo = "job_description";
         String endS = "<div class=\"panel panel-clean\">";
+        String result = "";
         
         while(s != null){
             if(s.contains(validInfo)){
-                System.out.println(s);
+                result = clean(s);
+                System.out.println("result: " + result);
+                fileWriting(result);
             }
             if(s.contains(endS))
                 end = true;
             
             s = br.readLine();
         }
+        
     }
     
     public void crawlQualifications(String viewKey){
@@ -207,7 +209,6 @@ public class job_crawler {
             String label = "<div><strong>";
             String validInfo = "<li>";
             String extra = "<a href";
-            
 
             while(s!=null){
                 if(s.contains(endS)){
@@ -236,5 +237,70 @@ public class job_crawler {
         String s3 = s2[0];
         String[] result = s3.split("[?]");
         return result[0];
+    }
+    
+    //TODO CLEANING....
+    public static String clean(String s){
+      String pre = "<div itemprop=\"description\" class=\"unselectable wrap-text\" id=\"job_description\">";
+      String[] s1 = s.split(pre);
+      System.out.println(s1[1]);
+      return s1[1];
+      
+//      while(s1[1].contains("<")){
+//        if(s.contains("<div>")){
+//          String[] div = s1[1].split("<div>");
+//          s1[1] = div[0];
+//          System.out.println(s1[1]);
+//        }
+//        else if(s.contains("</div")){
+//          String[] div2 = s1[1].split("</div>");
+//          s1[1] = div2[0];
+//          System.out.println(s1[1]);
+//        }
+      
+//      }
+    }
+    
+    public void fileWriting(String content) throws IOException{
+        File outputFile = new File("Jobs_Page.txt");
+//        
+//        FileWriter fileWrite = null;
+//        BufferedWriter bufferedWriter = null;
+//        PrintWriter printWriter = null;
+            
+        try{
+            if(!outputFile.exists()){outputFile.createNewFile();}
+            
+            BufferedWriter outStream= new BufferedWriter(new FileWriter(outputFile, true));
+            
+            outStream.newLine();
+            outStream.write(content);
+            outStream.close();
+//             if(!outputFile.exists()){outputFile.createNewFile();}
+     
+//            fileWrite = new FileWriter(outputFile);
+//            bufferedWriter = new BufferedWriter(fileWrite);
+//            printWriter = new PrintWriter(bufferedWriter);
+//            
+//            printWriter.println(content);
+            
+          //  bufferedWriter.write(content);
+          //  bufferedWriter.write("\n");
+           // bufferedWriter.append(content);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+//        finally{
+//            if(bufferedWriter != null && fileWrite != null){
+//                try{
+//                    bufferedWriter.close();
+//                    fileWrite.close();
+//                }
+//                catch(IOException e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 }
