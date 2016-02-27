@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +23,7 @@ public class job_crawler {
     
     Jobs job;
     
-    public static void main(String[] args) throws MalformedURLException, IOException  {
+    public static void main(String[] args) throws MalformedURLException, IOException, NoSuchFieldException  {
         job_crawler jcrawl = new job_crawler();
         
         jcrawl.crawlAllJobs();
@@ -44,7 +45,7 @@ public class job_crawler {
         String post = "&src=16&srcr=16";
         String url = "";
         
-        for(int i = 1; i <= 2; i++ ){
+        for(int i = 1; i <= 5; i++ ){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
@@ -101,13 +102,13 @@ public class job_crawler {
                 s = br.readLine();
             }
         } catch (MalformedURLException ex) {
-            Logger.getLogger(JobCrawler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(job_crawler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(JobCrawler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(job_crawler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public void crawlJobTitle(String viewKey){
+    public void crawlJobTitle(String viewKey) throws NoSuchFieldException{
         String pre = "http://www.jobstreet.com.ph/en/job/";
         String post = "?fr=21&src=16&srcr=16";
         String url = "";
@@ -145,9 +146,9 @@ public class job_crawler {
                 s = br.readLine();
             }
         }catch (MalformedURLException ex) {
-            Logger.getLogger(JobCrawler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(job_crawler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(JobCrawler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(job_crawler.class.getName()).log(Level.SEVERE, null, ex);
         } 
 //        return null;
     }
@@ -163,34 +164,17 @@ public class job_crawler {
         return result[0];
     }
     
+  
     //TODO CLEANING....
     public static String clean(String s){
       String pre = "<div itemprop=\"description\" class=\"unselectable wrap-text\" id=\"job_description\">";
       String[] s1 = s.split(pre);
       boolean end = false;
       System.out.println(s1[1]);
-      
-//      
-//        while(s1[1].contains("<") && end == false){
-//          if(s.contains("<div>")){
-//            String[] div = s1[1].split("<div>");
-//            s1[1] = div[1];
-//            System.out.println("s1[0]: "+s1[0]);
-//            System.out.println("s1[1]: " +s1[1]);
-//          }
-//          end = true;
-//        }
       return s1[1];
-//        else if(s.contains("</div")){
-//          String[] div2 = s1[1].split("</div>");
-//          s1[1] = div2[0];
-//          System.out.println(s1[1]);
-//        }
-      
-//      }
     }
     
-     public void crawlSkills(String jobTitle, String url) throws IOException{
+    public void crawlSkills(String jobTitle, String url) throws IOException, NoSuchFieldException{
         URL u = new URL(url);
             
         HttpURLConnection httpcon = (HttpURLConnection) u.openConnection(); 
@@ -220,38 +204,30 @@ public class job_crawler {
         
     }
       
-    public void fileWriting(String jobTitle, String content) throws IOException{
+    public void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
         File outputFile = new File(jobTitle + ".txt");
         boolean append = true;
-//        
-//        FileWriter fileWrite = null;
-//        BufferedWriter bufferedWriter = null;
-//        PrintWriter printWriter = null;
+        String[] temp = null;
             
         try{
             if(!outputFile.exists()){outputFile.createNewFile();}
             
-            BufferedWriter outStream= new BufferedWriter(new FileWriter(outputFile, append));
+            FileWriter fileWriter = new FileWriter(outputFile, append);
+            BufferedWriter outStream= new BufferedWriter(fileWriter);
             
             String title = "Job Title: " + jobTitle;
             outStream.write(title);
             outStream.newLine();
-            outStream.write(content);
-            outStream.newLine();
-            outStream.newLine();
+            
+            /* split the string then write it to a new line.*/
+            temp = content.split("</");
+            for(int i = 0; i < temp.length; i++){
+                outStream.write(temp[i]);
+                outStream.newLine();
+                outStream.newLine();
+            }
             outStream.close();
             append = false;
-//             if(!outputFile.exists()){outputFile.createNewFile();}
-     
-//            fileWrite = new FileWriter(outputFile);
-//            bufferedWriter = new BufferedWriter(fileWrite);
-//            printWriter = new PrintWriter(bufferedWriter);
-//            
-//            printWriter.println(content);
-            
-          //  bufferedWriter.write(content);
-          //  bufferedWriter.write("\n");
-           // bufferedWriter.append(content);
         }
         catch(IOException e){
             e.printStackTrace();
