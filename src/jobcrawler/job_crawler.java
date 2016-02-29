@@ -45,7 +45,7 @@ public class job_crawler {
         String post = "&src=16&srcr=16";
         String url = "";
         
-        for(int i = 1; i <= 5; i++ ){
+        for(int i = 1; i <= 1; i++ ){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
@@ -205,11 +205,17 @@ public class job_crawler {
     }
       
     public void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-        File outputFile = new File(jobTitle + ".txt");
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Data");
+      dir.mkdirs(); 
+      
+      File outputFile = new File(dir, jobTitle + ".txt");
         boolean append = true;
         String[] temp = null;
             
         try{
+          
+          
+          
             if(!outputFile.exists()){outputFile.createNewFile();}
             
             FileWriter fileWriter = new FileWriter(outputFile, append);
@@ -223,7 +229,6 @@ public class job_crawler {
             temp = content.split("</");
             for(int i = 0; i < temp.length; i++){
                 outStream.write(temp[i]);
-                outStream.newLine();
                 outStream.newLine();
             }
             outStream.close();
