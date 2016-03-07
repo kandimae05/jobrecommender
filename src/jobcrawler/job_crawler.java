@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,6 +44,12 @@ public class job_crawler {
         String post = "&src=16&srcr=16";
         String url = "";
         
+        /*For Education Jobs*/
+//        String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
+//                + "key=education&area=1&option=1&job-source=1%2C64&classified=1&job-"
+//                + "posted=0&sort=2&order=0&pg=";
+//        String post = "&src=16&srcr=12";
+        
         for(int i = 1; i <= 1; i++ ){
             page = i;
             url = pre+page+post;
@@ -55,7 +60,7 @@ public class job_crawler {
     }
     
     /* function for a general crawler and it accepts a string to 
-       be converted to a URL.
+       be converted to a URL. This should return the string.
     */
     public void general_crawler(String url) throws IOException{
         URL u = new URL(url);
@@ -71,7 +76,7 @@ public class job_crawler {
         } 
     }
     
-    //Crawls all the jobs in a page and store them in a list.
+    /*Crawls all the jobs in a page and store them in a list.*/
     public void crawlSpecificJob(String url){
         try {
             URL u = new URL(url);
@@ -96,7 +101,6 @@ public class job_crawler {
                 if(s.contains(validInfo)){
                     ctr++;
                     s = getViewLink(s);
-//                    System.out.println("viewkey "+ctr+": "+s);
                     jobViewKeys.add(s);
                 }
                 s = br.readLine();
@@ -150,12 +154,12 @@ public class job_crawler {
         } catch (IOException ex) {
             Logger.getLogger(job_crawler.class.getName()).log(Level.SEVERE, null, ex);
         } 
-//        return null;
     }
      
     public static String getViewLink(String s){
         String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
         String post = "\"?fr=21&src=16&srcr=16";
+        //String post = "\"?fr=21&src=12";
         
         String[] s1 = s.split(pre);
         String[] s2 = s1[1].split(post);
@@ -166,12 +170,35 @@ public class job_crawler {
     
   
     //TODO CLEANING....
-    public static String clean(String s){
+    public static String preClean(String jobTitle, String s) throws IOException, NoSuchFieldException{
       String pre = "<div itemprop=\"description\" class=\"unselectable wrap-text\" id=\"job_description\">";
       String[] s1 = s.split(pre);
       boolean end = false;
-      System.out.println(s1[1]);
+      System.out.println("s1[1]: " + s1[1]);
       return s1[1];
+    }
+    
+    public static String removeTags(String currentLine){
+      currentLine = currentLine.replaceAll("\\<.*?\\>", "");
+      System.out.println("currentLine: " + currentLine);
+      return currentLine;
+    }
+    
+    public void postClean(String jobTitle, String currentLine) throws IOException, NoSuchFieldException{
+      String delim = ">";
+      String[] string = currentLine.split(delim);
+      
+      for(int i = 0; i < string.length;){
+        if((string[i].contains("<")) || (string[i].contains(">"))){
+          System.out.println("increment");
+          i++;
+        }
+        else{
+          System.out.println("write this: " + string[i]);
+          fileWriting(jobTitle, string[i]);
+          i++;
+        }
+      }
     }
     
     public void crawlSkills(String jobTitle, String url) throws IOException, NoSuchFieldException{
@@ -190,11 +217,14 @@ public class job_crawler {
         String validInfo = "job_description";
         String endS = "<div class=\"panel panel-clean\">";
         String result = "";
+        File file = null;
         
         while(s != null){
             if(s.contains(validInfo)){
-                result = clean(s);
+                result = preClean(jobTitle, s);
+                System.out.println("result: " + result);
                 fileWriting(jobTitle, result);
+//                fileReading(jobTitle, file);
             }
             if(s.contains(endS))
                 end = true;
@@ -204,49 +234,64 @@ public class job_crawler {
         
     }
       
-    public void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Data");
+    public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Data"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
-        boolean append = true;
-        String[] temp = null;
-            
-        try{
+      String[] temp = null;
+      String result = null;
+      boolean append = true;
+
+      try{
+          if(!outputFile.exists()){outputFile.createNewFile();}
+
+          FileWriter fileWriter = new FileWriter(outputFile, append);
+          BufferedWriter outStream= new BufferedWriter(fileWriter);
+
+          String title = "Job Title: " + jobTitle;
+          outStream.write(title);
+          outStream.newLine();
+          outStream.newLine();
           
-          
-          
-            if(!outputFile.exists()){outputFile.createNewFile();}
-            
-            FileWriter fileWriter = new FileWriter(outputFile, append);
-            BufferedWriter outStream= new BufferedWriter(fileWriter);
-            
-            String title = "Job Title: " + jobTitle;
-            outStream.write(title);
-            outStream.newLine();
-            
-            /* split the string then write it to a new line.*/
-            temp = content.split("</");
-            for(int i = 0; i < temp.length; i++){
-                outStream.write(temp[i]);
-                outStream.newLine();
-            }
-            outStream.close();
-            append = false;
+          result = removeTags(content);
+          outStream.write(result);
+          outStream.newLine();
+          /* split the string then write it to a new line.*/
+//          temp = content.split("</");
+//          for(int i = 0; i < temp.length; i++){
+//              outStream.write(temp[i]);
+//              outStream.newLine();
+//              removeTags(temp[i]);
+//          }
+          outStream.close();
+          append = false;
+      }
+      catch(IOException e){
+          e.printStackTrace();
+      }
+    }
+    
+     public void fileReading(String jobTitle, File filename) throws FileNotFoundException, NoSuchFieldException{
+      BufferedReader reader = new BufferedReader(new FileReader(filename));
+      
+      try{
+        String currentLine;
+        currentLine = reader.readLine();
+        
+        while(currentLine != null){
+          // should do the cleaning here...
+//          postClean(jobTitle, currentLine);
+          currentLine = reader.readLine();
         }
-        catch(IOException e){
-            e.printStackTrace();
+      } catch (IOException e) {
+          e.printStackTrace();
+      } finally {
+          try {
+            if (reader != null)reader.close();
+          } catch (IOException ex) {
+            ex.printStackTrace();
         }
-//        finally{
-//            if(bufferedWriter != null && fileWrite != null){
-//                try{
-//                    bufferedWriter.close();
-//                    fileWrite.close();
-//                }
-//                catch(IOException e){
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
+      }
     }
 }
