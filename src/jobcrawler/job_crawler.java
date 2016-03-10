@@ -19,20 +19,15 @@ import java.util.logging.Logger;
  */
 public class job_crawler {
     private static ArrayList<String> jobViewKeys = new ArrayList<String>();
-    
-    Jobs job;
-    
+   
     public static void main(String[] args) throws MalformedURLException, IOException, NoSuchFieldException  {
         job_crawler jcrawl = new job_crawler();
         
         jcrawl.crawlAllJobs();
         for(int i=0; i < jobViewKeys.size(); i++){
-//             jcrawl.crawlQualifications(jobViewKeys.get(i));
-               jcrawl.crawlJobTitle(jobViewKeys.get(i));
+          jcrawl.crawlJobTitle(jobViewKeys.get(i));
               
         }
-        
-//        jcrawl.general_crawler("http://www.jobstreet.com.ph/en/job/6192918?fr=21&src=16&srcr=16");
     }
     
     //just like the crawlAllPassers
@@ -50,12 +45,11 @@ public class job_crawler {
 //                + "posted=0&sort=2&order=0&pg=";
 //        String post = "&src=16&srcr=12";
         
-        for(int i = 1; i <= 1; i++ ){
+        for(int i = 1; i <= 205; i++){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
             crawlSpecificJob(url);
-            System.out.println("done");
         }
     }
     
@@ -157,14 +151,26 @@ public class job_crawler {
     }
      
     public static String getViewLink(String s){
-        String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
-        String post = "\"?fr=21&src=16&srcr=16";
-        //String post = "\"?fr=21&src=12";
+        String[] result;
         
-        String[] s1 = s.split(pre);
-        String[] s2 = s1[1].split(post);
-        String s3 = s2[0];
-        String[] result = s3.split("[?]");
+        if(s.contains("ph/jobs")){
+          String pre = "default/80/";
+          String post = ".htm?fr=21&src=16&srcr=12";
+          String[] s1 = s.split(pre);
+          String[] s2 = s1[1].split(post);
+          String s3 = s2[0];
+          result = s3.split(".htm");
+        }
+        else{
+          String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
+          String post = "\"?fr=21&src=16&srcr=12";
+          String[] s1 = s.split(pre);
+          String[] s2 = s1[1].split(post);
+//        System.out.println("s1[1]: " + s1[1]);
+          String s3 = s2[0];
+//        System.out.println("s3: " + s3);
+          result = s3.split("[?]");
+        }
         return result[0];
     }
     
