@@ -26,12 +26,11 @@ public class job_crawler {
         jcrawl.crawlAllJobs();
         for(int i=0; i < jobViewKeys.size(); i++){
           jcrawl.crawlJobTitle(jobViewKeys.get(i));
-              
         }
     }
     
     //just like the crawlAllPassers
-    public void crawlAllJobs() throws IOException{
+    public void crawlAllJobs() throws IOException, NoSuchFieldException{
         int page;
         String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
                 + "key=Computer+Science&area=1&option=1&job-source=1%2C64&classified=1&job-"
@@ -45,7 +44,7 @@ public class job_crawler {
 //                + "posted=0&sort=2&order=0&pg=";
 //        String post = "&src=16&srcr=12";
         
-        for(int i = 1; i <= 205; i++){
+        for(int i = 1; i <= 100; i++){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
@@ -136,7 +135,6 @@ public class job_crawler {
                     String[] title = s1[1].split(endS);
                     System.out.println("Job title: " + title[0]);
                     crawlSkills(title[0], url);
-//                    return title[0];
                 }
                 if(s.contains(endS)){
                     end = true;
@@ -166,16 +164,12 @@ public class job_crawler {
           String post = "\"?fr=21&src=16&srcr=12";
           String[] s1 = s.split(pre);
           String[] s2 = s1[1].split(post);
-//        System.out.println("s1[1]: " + s1[1]);
           String s3 = s2[0];
-//        System.out.println("s3: " + s3);
           result = s3.split("[?]");
         }
         return result[0];
     }
     
-  
-    //TODO CLEANING....
     public static String preClean(String jobTitle, String s) throws IOException, NoSuchFieldException{
       String pre = "<div itemprop=\"description\" class=\"unselectable wrap-text\" id=\"job_description\">";
       String[] s1 = s.split(pre);
@@ -186,7 +180,7 @@ public class job_crawler {
     
     public static String removeTags(String currentLine){
       currentLine = currentLine.replaceAll("\\<.*?\\>", "");
-      System.out.println("currentLine: " + currentLine);
+      currentLine = currentLine.replaceAll("&nbsp;"," ");
       return currentLine;
     }
     
@@ -228,20 +222,17 @@ public class job_crawler {
         while(s != null){
             if(s.contains(validInfo)){
                 result = preClean(jobTitle, s);
-                System.out.println("result: " + result);
                 fileWriting(jobTitle, result);
-//                fileReading(jobTitle, file);
             }
             if(s.contains(endS))
                 end = true;
             
             s = br.readLine();
         }
-        
     }
-      
+ 
     public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Data"); //Static
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Dataset-CS"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
@@ -275,29 +266,6 @@ public class job_crawler {
       }
       catch(IOException e){
           e.printStackTrace();
-      }
-    }
-    
-     public void fileReading(String jobTitle, File filename) throws FileNotFoundException, NoSuchFieldException{
-      BufferedReader reader = new BufferedReader(new FileReader(filename));
-      
-      try{
-        String currentLine;
-        currentLine = reader.readLine();
-        
-        while(currentLine != null){
-          // should do the cleaning here...
-//          postClean(jobTitle, currentLine);
-          currentLine = reader.readLine();
-        }
-      } catch (IOException e) {
-          e.printStackTrace();
-      } finally {
-          try {
-            if (reader != null)reader.close();
-          } catch (IOException ex) {
-            ex.printStackTrace();
-        }
       }
     }
 }
