@@ -44,7 +44,7 @@ public class job_crawler {
 //                + "posted=0&sort=2&order=0&pg=";
 //        String post = "&src=16&srcr=12";
         
-        for(int i = 1; i <= 100; i++){
+        for(int i = 101; i <= 205; i++){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
@@ -232,7 +232,7 @@ public class job_crawler {
     }
  
     public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Dataset-CS"); //Static
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\data-cs"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
@@ -254,13 +254,6 @@ public class job_crawler {
           result = removeTags(content);
           outStream.write(result);
           outStream.newLine();
-          /* split the string then write it to a new line.*/
-//          temp = content.split("</");
-//          for(int i = 0; i < temp.length; i++){
-//              outStream.write(temp[i]);
-//              outStream.newLine();
-//              removeTags(temp[i]);
-//          }
           outStream.close();
           append = false;
       }
