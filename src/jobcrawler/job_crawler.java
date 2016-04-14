@@ -18,59 +18,91 @@ import java.util.logging.Logger;
  * @author candymae
  */
 public class job_crawler {
-    private static ArrayList<String> jobViewKeys = new ArrayList<String>();
-   
     public static void main(String[] args) throws MalformedURLException, IOException, NoSuchFieldException  {
         job_crawler jcrawl = new job_crawler();
         
-        jcrawl.crawlAllJobs();
-        for(int i=0; i < jobViewKeys.size(); i++){
-          jcrawl.crawlJobTitle(jobViewKeys.get(i));
-        }
+        
+        jcrawl.crawlCSJobs(); //finished
+       // jcrawl.crawlEducJobs();
+        //jcrawl.crawlHRMJobs();
+      //  for(int i=0; i < jobViewKeys.size(); i++){
+       //   jcrawl.crawlJobTitle(jobViewKeys.get(i));
+       // }
     }
     
-    //just like the crawlAllPassers
-    public void crawlAllJobs() throws IOException, NoSuchFieldException{
+    //------------------ URLs of the FIVE DIFFERENT JOBS -----------------------
+    // 205 pages
+    public void crawlCSJobs() throws NoSuchFieldException{
+        ArrayList<String> CSViewKeys = new ArrayList<String>();
         int page;
         String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
                 + "key=Computer+Science&area=1&option=1&job-source=1%2C64&classified=1&job-"
                 + "posted=0&sort=2&order=0&pg=";
-        String post = "&src=16&srcr=16";
+        String post = "?fr=21&srcr=16";
         String url = "";
         
-        /*For Education Jobs*/
-//        String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
-//                + "key=education&area=1&option=1&job-source=1%2C64&classified=1&job-"
-//                + "posted=0&sort=2&order=0&pg=";
-//        String post = "&src=16&srcr=12";
-        
-        for(int i = 101; i <= 205; i++){
+         for(int i = 1; i <= 5; i++){
             page = i;
             url = pre+page+post;
             System.out.println("Crawling page " + page +"...");
-            crawlSpecificJob(url);
+            crawlSpecificJob(url, CSViewKeys);
+        }
+         
+        String pre2 = "http://www.jobstreet.com.ph/en/job/";
+        String post2 = "?fr=21&src=16&srcr=16";
+        
+        for(int i = 0; i < CSViewKeys.size(); i++){
+          crawlJobTitle(pre2, post, CSViewKeys.get(i));
         }
     }
     
-    /* function for a general crawler and it accepts a string to 
-       be converted to a URL. This should return the string.
-    */
-    public void general_crawler(String url) throws IOException{
-        URL u = new URL(url);
-        HttpURLConnection httpcon = (HttpURLConnection) u.openConnection(); 
-        httpcon.addRequestProperty("User-Agent", "Mozilla/4.76");  
-        InputStream is= httpcon.getInputStream();
-        InputStreamReader reader = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(reader);
-        String s = "";
+    // 238 total pages
+    public void crawlEducJobs(){
+      ArrayList<String> EducViewKeys = new ArrayList<String>();
+      int page;
+        String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
+                + "key=education&area=1&option=1&job-source=1%2C64&classified=1&job-"
+                + "posted=0&sort=2&order=0&pg=";
+        String post = "&src=16&srcr=12";
+        String url = "";
         
-        while(null != (s = br.readLine())){
-            System.out.println(s);
-        } 
+         for(int i = 1; i <= 2; i++){
+            page = i;
+            url = pre+page+post;
+            System.out.println("Crawling page " + page +"...");
+            crawlSpecificJob(url, EducViewKeys);
+        }
+         
+    }
+    // 27 total pages
+    public void crawlHRMJobs(){
+      ArrayList<String> HRMViewKeys = new ArrayList<String>();
+      int page;
+      String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
+              + "key=Hotel+and+Restaurant+Management&area=1&option=1&job-"
+              + "source=1%2C64&classified=1&job-posted=0&sort=2&order=0&pg=";
+      String post = "&src=16&srcr=16";
+      String url = "";
+      
+      for(int i = 1; i <= 5; i++){
+        page = i;
+        url = pre+page+post;
+        System.out.println("Crawling page " + page +"...");
+        crawlSpecificJob(url, HRMViewKeys);
+      }
     }
     
+    public void crawlNURSINGJobs(){
+    
+    }
+    
+    public void crawlStatJobs(){
+    
+    }
+    
+    //------------------------- Main System Functionalities --------------------
     /*Crawls all the jobs in a page and store them in a list.*/
-    public void crawlSpecificJob(String url){
+    public void crawlSpecificJob(String url, ArrayList<String> jobViewKeys){
         try {
             URL u = new URL(url);
             
@@ -105,9 +137,7 @@ public class job_crawler {
         }
     }
     
-    public void crawlJobTitle(String viewKey) throws NoSuchFieldException{
-        String pre = "http://www.jobstreet.com.ph/en/job/";
-        String post = "?fr=21&src=16&srcr=16";
+    public void crawlJobTitle(String pre, String post, String viewKey) throws NoSuchFieldException{
         String url = "";
         
         url = pre+viewKey+post;
@@ -179,26 +209,11 @@ public class job_crawler {
     }
     
     public static String removeTags(String currentLine){
-      currentLine = currentLine.replaceAll("\\<.*?\\>", "");
-      currentLine = currentLine.replaceAll("&nbsp;"," ");
+      currentLine = currentLine.replaceAll("\\<.*?\\>"," ");
+      currentLine = currentLine.replaceAll("&nbsp;","");
+      currentLine = currentLine.replaceAll("&bull;","");
+      currentLine = currentLine.replaceAll("&amp;","");
       return currentLine;
-    }
-    
-    public void postClean(String jobTitle, String currentLine) throws IOException, NoSuchFieldException{
-      String delim = ">";
-      String[] string = currentLine.split(delim);
-      
-      for(int i = 0; i < string.length;){
-        if((string[i].contains("<")) || (string[i].contains(">"))){
-          System.out.println("increment");
-          i++;
-        }
-        else{
-          System.out.println("write this: " + string[i]);
-          fileWriting(jobTitle, string[i]);
-          i++;
-        }
-      }
     }
     
     public void crawlSkills(String jobTitle, String url) throws IOException, NoSuchFieldException{
@@ -232,7 +247,7 @@ public class job_crawler {
     }
  
     public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\data-cs"); //Static
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Data"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
@@ -246,14 +261,8 @@ public class job_crawler {
           FileWriter fileWriter = new FileWriter(outputFile, append);
           BufferedWriter outStream= new BufferedWriter(fileWriter);
 
-          String title = "Job Title: " + jobTitle;
-          outStream.write(title);
-          outStream.newLine();
-          outStream.newLine();
-          
           result = removeTags(content);
           outStream.write(result);
-          outStream.newLine();
           outStream.close();
           append = false;
       }
