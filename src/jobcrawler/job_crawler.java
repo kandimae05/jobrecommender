@@ -20,62 +20,37 @@ import java.util.logging.Logger;
 public class job_crawler {
     public static void main(String[] args) throws MalformedURLException, IOException, NoSuchFieldException  {
         job_crawler jcrawl = new job_crawler();
-        
-      // jcrawl.crawlCSJobs(); //finished
-       //jcrawl.crawlEducJobs();
-       //jcrawl.crawlHRMJobs();
-        jcrawl.crawlNURSINGJobs();
-        jcrawl.crawlStatJobs();
-      
+        String phCode = ".ph/en/", sgCode = ".sg/en/", mlyCode = ".my/en/";
+        //jcrawl.crawlStatJobs();
+        //jcrawl.crawlHRMJobs();
+       // jcrawl.crawlNURSINGJobs();
+       // jcrawl.crawlCSJobs(phCode, 205); // DONE
+        jcrawl.crawlCSJobs(sgCode, 115);
+        jcrawl.crawlCSJobs(mlyCode, 121);
+       // jcrawl.crawlEducJobs();
     }
-    
     //------------------ URLs of the FIVE DIFFERENT JOBS -----------------------
-    // 205 pages
-    public void crawlCSJobs() throws NoSuchFieldException{
-        ArrayList<String> CSViewKeys = new ArrayList<String>();
-        int page;
-        String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
-                + "key=Computer+Science&area=1&option=1&job-source=1%2C64&classified=1&job-"
-                + "posted=0&sort=2&order=0&pg=";
-        String post = "?fr=21&srcr=16";
-        String url = "";
-        
-         for(int i = 1; i <= 1; i++){
-            page = i;
-            url = pre+page+post;
-            System.out.println("Crawling CS page " + page +"...");
-            crawlSpecificJob(1, url, CSViewKeys);
-        }
-      
-        String pre1 = "http://www.jobstreet.com.ph/en/job/";
-        String post1 = "?fr=21&src=16";
-        
-        for(int i = 0; i < CSViewKeys.size(); i++){
-          crawlJobTitle(pre1, post1, CSViewKeys.get(i));
-        }
-    }
-    // 238 total pages
-    public void crawlEducJobs() throws NoSuchFieldException{
-      ArrayList<String> EducViewKeys = new ArrayList<String>();
+    // 22 pages
+    public void crawlStatJobs() throws NoSuchFieldException{
+      ArrayList<String> StatViewKeys = new ArrayList<String>();
       int page;
-        String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
-                + "key=education&area=1&option=1&job-source=1%2C64&classified=1&job-"
-                + "posted=0&sort=2&order=0&pg=";
-        String post = "&src=16&srcr=16";
-        String url = "";
-        
-         for(int i = 1; i <= 1; i++){
-            page = i;
-            url = pre+page+post;
-            System.out.println("Crawling EDUCATION page " + page +"...");
-            crawlSpecificJob(2, url, EducViewKeys);
-        }
-        String pre2 = "http://www.jobstreet.com.ph/en/job/";
-        String post2 = "?fr=21&src=16";
-        
-        for(int i = 0; i < EducViewKeys.size(); i++){
-          crawlJobTitle(pre2, post2, EducViewKeys.get(i));
-        }
+      String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
+              + "key=Statistics&area=1&option=1&job-source=1%2C64&classified=1&job-"
+              + "posted=0&sort=2&order=0&pg=";
+      String post = "&src=16&srcr=16";
+      String url = "";
+      for(int i = 1; i <= 22; i++){
+        page = i;
+        url = pre+page+post;
+        System.out.println("Crawling STATISTICS page " + page +"...");
+       // crawlSpecificJob(1, url, StatViewKeys);
+      }
+      
+      String pre1 = "http://www.jobstreet.com.ph/en/job/";
+      String post1 = "?fr=21&src=16&srcr=16";
+      for(int i = 0; i < StatViewKeys.size(); i++){
+          crawlJobTitle(pre1, post1, StatViewKeys.get(i));
+      }
     }
     // 27 total pages
     public void crawlHRMJobs() throws NoSuchFieldException{
@@ -87,11 +62,11 @@ public class job_crawler {
       String post = "&src=16&srcr=16";
       String url = "";
       
-      for(int i = 1; i <= 1; i++){
+      for(int i = 1; i <= 27; i++){
         page = i;
         url = pre+page+post;
         System.out.println("Crawling HRM page " + page +"...");
-        crawlSpecificJob(2, url, HRMViewKeys);
+       // crawlSpecificJob(2, url, HRMViewKeys);
       }
       
       String pre1 = "http://www.jobstreet.com.ph/en/job/";
@@ -109,11 +84,11 @@ public class job_crawler {
               + "posted=0&sort=2&order=0&pg=";
       String post = "&src=16&srcr=16";
       String url = "";
-      for(int i = 1; i <= 1; i++){
+      for(int i = 1; i <= 75; i++){
         page = i;
         url = pre+page+post;
         System.out.println("Crawling NURSING page " + page +"...");
-        crawlSpecificJob(2, url, NursingViewKeys);
+       // crawlSpecificJob(2, url, NursingViewKeys);
       }
       
       String pre1 = "http://www.jobstreet.com.ph/en/job/";
@@ -122,32 +97,56 @@ public class job_crawler {
           crawlJobTitle(pre1, post1, NursingViewKeys.get(i));
       }
     }
-    
-    public void crawlStatJobs() throws NoSuchFieldException{
-      ArrayList<String> StatViewKeys = new ArrayList<String>();
-      int page;
-      String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
-              + "key=Statistics&area=1&option=1&job-source=1%2C64&classified=1&job-"
-              + "posted=0&sort=2&order=0&pg=";
-      String post = "&src=16&srcr=16";
-      String url = "";
-      for(int i = 1; i <= 1; i++){
-        page = i;
-        url = pre+page+post;
-        System.out.println("Crawling STATISTICS page " + page +"...");
-        crawlSpecificJob(1, url, StatViewKeys);
-      }
+    // 205 pages
+    public void crawlCSJobs(String countryCode, int jobNum) throws NoSuchFieldException{
+        ArrayList<String> CSViewKeys = new ArrayList<String>();
+        int page;
+        String pre = "http://www.jobstreet.com" + countryCode + "job-search/job-vacancy.php?"
+                + "key=Computer+Science&area=1&option=1&job-source=1%2C64&classified=1&job-"
+                + "posted=0&sort=2&order=0&pg=";
+        String post = "?fr=21&srcr=16";
+        String url = "";
+        
+         for(int i = 1; i <= jobNum; i++){
+            page = i;
+            url = pre+page+post;
+            System.out.println("Crawling CS page " + page +"...");
+            crawlSpecificJob(1, url, CSViewKeys, countryCode);
+        }
       
-      String pre1 = "http://www.jobstreet.com.ph/en/job/";
-      String post1 = "?fr=21&src=16&srcr=16";
-      for(int i = 0; i < StatViewKeys.size(); i++){
-          crawlJobTitle(pre1, post1, StatViewKeys.get(i));
-      }
+        String pre1 = "http://www.jobstreet.com" + countryCode;
+        String post1 = "?fr=21&src=16";
+        
+        for(int i = 0; i < CSViewKeys.size(); i++){
+          crawlJobTitle(pre1, post1, CSViewKeys.get(i));
+        }
     }
-    
+    // 238 total pages
+    public void crawlEducJobs() throws NoSuchFieldException{
+      ArrayList<String> EducViewKeys = new ArrayList<String>();
+      int page;
+        String pre = "http://www.jobstreet.com.ph/en/job-search/job-vacancy.php?"
+                + "key=education&area=1&option=1&job-source=1%2C64&classified=1&job-"
+                + "posted=0&sort=2&order=0&pg=";
+        String post = "&src=16&srcr=16";
+        String url = "";
+        
+         for(int i = 1; i <= 238; i++){
+            page = i;
+            url = pre+page+post;
+            System.out.println("Crawling EDUCATION page " + page +"...");
+         //   crawlSpecificJob(2, url, EducViewKeys);
+        }
+        String pre2 = "http://www.jobstreet.com.ph/en/job/";
+        String post2 = "?fr=21&src=16";
+        
+        for(int i = 0; i < EducViewKeys.size(); i++){
+          crawlJobTitle(pre2, post2, EducViewKeys.get(i));
+        }
+    }
     //------------------------- Main System Functionalities --------------------
     /*Crawls all the jobs in a page and store them in a list.*/
-    public void crawlSpecificJob(int urlcase, String url, ArrayList<String> jobViewKeys){
+    public void crawlSpecificJob(int urlcase, String url, ArrayList<String> jobViewKeys, String ccode){
         try {
             URL u = new URL(url);
             
@@ -170,7 +169,7 @@ public class job_crawler {
                 }
                 if(s.contains(validInfo)){
                     ctr++;
-                    s = getViewLink(urlcase, s);
+                    s = getViewLink(urlcase, s, ccode);
                     jobViewKeys.add(s);
                 }
                 s = br.readLine();
@@ -223,7 +222,7 @@ public class job_crawler {
         } 
     }
      
-    public static String getViewLink(int urlcase, String s){
+    public static String getViewLink(int urlcase, String s, String countryCode){
         String[] result = null;
         
         if(s.contains("ph/jobs")){
@@ -234,10 +233,26 @@ public class job_crawler {
           String s3 = s2[0];
           result = s3.split(".htm");
         }
+        else if(s.contains("sg/jobs")){ //singapore internship forms
+          String preUrl = "default/20/";
+          String postUrl = ".htm?fr=21";
+          String[] str1 = s.split(preUrl);
+          String[] str2 = str1[1].split(postUrl);
+          String str3 = str2[0];
+          result = str3.split(".htm");
+        }
+        else if(s.contains("my/jobs")){ //malaysia internship forms
+          String pre_url = "default/10/";
+          String post_url = ".htm?fr=21&src=16&srcr=12";
+          String[] s1 = s.split(pre_url);
+          String[] s2 = s1[1].split(post_url);
+          String s3 = s2[0];
+          result = s3.split(".htm");
+        }
         else{
           switch (urlcase){
             case 1:
-              String pre = "href=\"http://www.jobstreet.com.ph/en/job/";
+              String pre = "href=\"http://www.jobstreet.com" + countryCode + "job/";
               String post = "\"?fr=21&src=16&srcr=12";
               String[] s1 = s.split(pre);
               String[] s2 = s1[1].split(post);
@@ -246,7 +261,7 @@ public class job_crawler {
               break;
               
             case 2:
-              String pre1 = "href=\"http://www.jobstreet.com.ph/en/job/";
+              String pre1 = "href=\"http://www.jobstreet.com" + countryCode + "job/";
               String post1 = "\"&src=16&srcr=16";
               String[] str = s.split(pre1);
               String[] str1 = str[1].split(post1);
@@ -305,7 +320,7 @@ public class job_crawler {
     }
  
     public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Data"); //Static
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\new_data"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
