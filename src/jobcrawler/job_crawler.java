@@ -25,7 +25,7 @@ public class job_crawler {
         //jcrawl.crawlHRMJobs();
        // jcrawl.crawlNURSINGJobs();
        // jcrawl.crawlCSJobs(phCode, 205); // DONE
-        jcrawl.crawlCSJobs(sgCode, 115);
+        jcrawl.crawlCSJobs(sgCode, 115); 
         jcrawl.crawlCSJobs(mlyCode, 121);
        // jcrawl.crawlEducJobs();
     }
@@ -104,7 +104,7 @@ public class job_crawler {
         String pre = "http://www.jobstreet.com" + countryCode + "job-search/job-vacancy.php?"
                 + "key=Computer+Science&area=1&option=1&job-source=1%2C64&classified=1&job-"
                 + "posted=0&sort=2&order=0&pg=";
-        String post = "?fr=21&srcr=16";
+        String post = "?fr=21&src=16&srcr=12";
         String url = "";
         
          for(int i = 1; i <= jobNum; i++){
@@ -114,8 +114,8 @@ public class job_crawler {
             crawlSpecificJob(1, url, CSViewKeys, countryCode);
         }
       
-        String pre1 = "http://www.jobstreet.com" + countryCode;
-        String post1 = "?fr=21&src=16";
+        String pre1 = "http://www.jobstreet.com" + countryCode+"job/";
+        String post1 = "?fr=21&src=16&srcr=12";
         
         for(int i = 0; i < CSViewKeys.size(); i++){
           crawlJobTitle(pre1, post1, CSViewKeys.get(i));
@@ -252,7 +252,8 @@ public class job_crawler {
         else{
           switch (urlcase){
             case 1:
-              String pre = "href=\"http://www.jobstreet.com" + countryCode + "job/";
+              String job = "job/";
+              String pre = "href=\"http://www.jobstreet.com" + countryCode.concat(job);
               String post = "\"?fr=21&src=16&srcr=12";
               String[] s1 = s.split(pre);
               String[] s2 = s1[1].split(post);
@@ -261,7 +262,8 @@ public class job_crawler {
               break;
               
             case 2:
-              String pre1 = "href=\"http://www.jobstreet.com" + countryCode + "job/";
+              String job1 = "job/";
+              String pre1 = "href=\"http://www.jobstreet.com" + countryCode.concat(job1);
               String post1 = "\"&src=16&srcr=16";
               String[] str = s.split(pre1);
               String[] str1 = str[1].split(post1);
