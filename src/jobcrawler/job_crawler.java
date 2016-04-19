@@ -23,29 +23,29 @@ public class job_crawler {
         String phCode = ".ph/en/", sgCode = ".sg/en/", mlyCode = ".my/en/";
         
         // Computer Science Job Postings
-        jcrawl.crawlCSJobs(phCode, 205); // DONE
+        //jcrawl.crawlCSJobs(phCode, 205); // DONE
         jcrawl.crawlCSJobs(sgCode, 110); 
-        jcrawl.crawlCSJobs(mlyCode, 121);
+        //jcrawl.crawlCSJobs(mlyCode, 121);
          
         // Statistics Job Postings
-        jcrawl.crawlStatJobs(phCode, 21);
-        jcrawl.crawlStatJobs(sgCode, 31);
-        jcrawl.crawlStatJobs(mlyCode, 17);
+        //jcrawl.crawlStatJobs(phCode, 21);
+       //jcrawl.crawlStatJobs(sgCode, 31);
+        //jcrawl.crawlStatJobs(mlyCode, 17);
          
         // Nursing Job Postings
-        jcrawl.crawlNURSINGJobs(phCode, 66);
-        jcrawl.crawlNURSINGJobs(sgCode, 47);
-        jcrawl.crawlNURSINGJobs(mlyCode, 8);
+        //jcrawl.crawlNURSINGJobs(phCode, 66);
+        //jcrawl.crawlNURSINGJobs(sgCode, 47);
+        //jcrawl.crawlNURSINGJobs(mlyCode, 8);
         
         // HRM Job Postings
-        jcrawl.crawlHRMJobs(phCode, 24);
-        jcrawl.crawlHRMJobs(sgCode, 6);
-        jcrawl.crawlHRMJobs(mlyCode, 6);
+//        jcrawl.crawlHRMJobs(phCode, 24);
+//        jcrawl.crawlHRMJobs(sgCode, 6);
+//        jcrawl.crawlHRMJobs(mlyCode, 6);
         
         // Education Job Postings
-        jcrawl.crawlEducJobs(phCode, 36);
-        jcrawl.crawlEducJobs(sgCode, 33);
-        jcrawl.crawlEducJobs(mlyCode, 10);
+//        jcrawl.crawlEducJobs(phCode, 36);
+//        jcrawl.crawlEducJobs(sgCode, 33);
+//        jcrawl.crawlEducJobs(mlyCode, 10);
     }
     //------------------ URLs of the FIVE DIFFERENT JOBS ----------------------
     public void crawlStatJobs(String countryCode, int jobNum) throws NoSuchFieldException{
@@ -337,7 +337,7 @@ public class job_crawler {
     }
  
     public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\Final_Data"); //Static
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\CS_SG"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
