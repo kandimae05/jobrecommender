@@ -23,29 +23,29 @@ public class job_crawler {
         String phCode = ".ph/en/", sgCode = ".sg/en/", mlyCode = ".my/en/";
         
         // Computer Science Job Postings
-        //jcrawl.crawlCSJobs(phCode, 205); // DONE
-        jcrawl.crawlCSJobs(sgCode, 110); 
-        //jcrawl.crawlCSJobs(mlyCode, 121);
+        jcrawl.crawlCSJobs(phCode, 205); // DONE
+        jcrawl.crawlCSJobs(sgCode, 110);  // DONE
+        jcrawl.crawlCSJobs(mlyCode, 121); //DONE
          
         // Statistics Job Postings
-        //jcrawl.crawlStatJobs(phCode, 21);
-       //jcrawl.crawlStatJobs(sgCode, 31);
-        //jcrawl.crawlStatJobs(mlyCode, 17);
+        jcrawl.crawlStatJobs(phCode, 21); // DONE
+        jcrawl.crawlStatJobs(sgCode, 31); //DONE
+        jcrawl.crawlStatJobs(mlyCode, 17); //DONE
          
         // Nursing Job Postings
-        //jcrawl.crawlNURSINGJobs(phCode, 66);
-        //jcrawl.crawlNURSINGJobs(sgCode, 47);
-        //jcrawl.crawlNURSINGJobs(mlyCode, 8);
+        jcrawl.crawlNURSINGJobs(phCode, 66); //DONE
+        jcrawl.crawlNURSINGJobs(sgCode, 47); //DONE
+        jcrawl.crawlNURSINGJobs(mlyCode, 8); // DONE
         
         // HRM Job Postings
-//        jcrawl.crawlHRMJobs(phCode, 24);
-//        jcrawl.crawlHRMJobs(sgCode, 6);
-//        jcrawl.crawlHRMJobs(mlyCode, 6);
+        jcrawl.crawlHRMJobs(phCode, 24); //DONE
+        jcrawl.crawlHRMJobs(sgCode, 6); //DONE
+        jcrawl.crawlHRMJobs(mlyCode, 6); //DONE
         
         // Education Job Postings
-//        jcrawl.crawlEducJobs(phCode, 36);
-//        jcrawl.crawlEducJobs(sgCode, 33);
-//        jcrawl.crawlEducJobs(mlyCode, 10);
+        jcrawl.crawlEducJobs(phCode, 36); //DONE
+        jcrawl.crawlEducJobs(sgCode, 33); //DONE
+        jcrawl.crawlEducJobs(mlyCode, 10); //DONE
     }
     //------------------ URLs of the FIVE DIFFERENT JOBS ----------------------
     public void crawlStatJobs(String countryCode, int jobNum) throws NoSuchFieldException{
@@ -249,41 +249,51 @@ public class job_crawler {
           result = s3.split(".htm");
         }
         else if(s.contains("sg/jobs")){ //singapore internship forms
-          String preUrl = "default/20/";
-          String postUrl = ".htm?fr=21";
-          String[] str1 = s.split(preUrl);
-          String[] str2 = str1[1].split(postUrl);
-          String str3 = str2[0];
-          result = str3.split(".htm");
-        }
-        else if(s.contains("my/jobs")){ //malaysia internship forms
-          String pre_url = "default/10/";
-          String post_url = ".htm?fr=21&src=16&srcr=12";
-          String[] s1 = s.split(pre_url);
-          String[] s2 = s1[1].split(post_url);
+          String pre = "default/20/";
+          String post = ".htm?fr=21&src=16&srcr=12";
+          String[] s1 = s.split(pre);
+          String[] s2 = s1[1].split(post);
           String s3 = s2[0];
           result = s3.split(".htm");
+        }
+        else if(s.contains("my/jobs")){ //malaysia internship forms
+          String pre = "default/10/";
+          if(s.contains(pre)){
+            String post = ".htm?fr=21&src=16&srcr=12";
+            String[] s1 = s.split(pre);
+            System.out.println("s1[0]: " + s1[0]);
+            System.out.println("s1[1]: " + s1[1]);
+            String[] s2 = s1[1].split(post);
+            String s3 = s2[0];
+            result = s3.split(".htm");
+            System.out.println("result: " + result[0]);
+          }else
+            return null;
         }
         else{
           switch (urlcase){
             case 1:
               String job = "job/";
               String pre = "href=\"http://www.jobstreet.com" + countryCode.concat(job);
+             if(s.contains(pre)){
               String post = "\"?fr=21&src=16&srcr=12";
               String[] s1 = s.split(pre);
               String[] s2 = s1[1].split(post);
               String s3 = s2[0];
               result = s3.split("[?]");
+             }else return null;
               break;
               
             case 2:
               String job1 = "job/";
               String pre1 = "href=\"http://www.jobstreet.com" + countryCode.concat(job1);
-              String post1 = "\"&src=16&srcr=16";
-              String[] str = s.split(pre1);
-              String[] str1 = str[1].split(post1);
-              String str2 = str1[0];
-              result = str2.split("[?]");
+              if(s.contains(pre1)){
+                String post1 = "\"&src=16&srcr=16";
+                String[] str = s.split(pre1);
+                String[] str1 = str[1].split(post1);
+                String str2 = str1[0];
+                result = str2.split("[?]");
+              }else return null;
               break;
           }
         }
@@ -337,7 +347,7 @@ public class job_crawler {
     }
  
     public static void fileWriting(String jobTitle, String content) throws IOException, NoSuchFieldException{
-      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\Job_Crawler\\src\\CS_SG"); //Static
+      File dir = new File("C:\\Users\\DCS-SERVER.DCS-SERVER-PC\\Desktop\\JobCrawler\\src\\DATASET"); //Static
       dir.mkdirs(); 
       
       File outputFile = new File(dir, jobTitle + ".txt");
